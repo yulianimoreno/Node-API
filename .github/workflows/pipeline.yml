@@ -2,26 +2,27 @@ name: Main workflow
 on: push   #Event 
 
 jobs:
+jobs:
   build:
     runs-on: ubuntu-latest
-    name: Run unit tests and SAST scan on the source code 
+    name: Run SAST scan on the source code
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK 11
-      uses: actions/setup-java@v2
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build with Maven cloud
-      run:  mvn -B verify sonar:sonar -Dsonar.projectKey=javaproject-yuliani -Dsonar.organization=javaproject-yuliani -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    
+      - uses: actions/checkout@v3
+      - name: Use Node.js 
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm install
+      - run: npm run build --if-present
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   security:
       runs-on: ubuntu-latest
       #needs: build  #can be disabled
-      name: Run the SCA scan on the source code
+      name: SCA scan Snyk
       steps:
         - uses: actions/checkout@master
         - name: Run Snyk to check for vulnerabilities
