@@ -2,7 +2,6 @@ name: Main workflow
 on: push   #Event 
 
 jobs:
-jobs:
   build:
     runs-on: ubuntu-latest
     name: Run SAST scan on the source code
@@ -27,6 +26,7 @@ jobs:
         - uses: actions/checkout@master
         - name: Run Snyk to check for vulnerabilities
           uses: snyk/actions/node@master
+          continue-on-error: true
           env:
             SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
   zap_scan:
