@@ -4,7 +4,7 @@ on: push   #Event
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Run SAST scan on the source code
+    name: Build the node js project
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js 
@@ -16,6 +16,7 @@ jobs:
       - run: npm run build --if-present
   sonarcloud:
     runs-on: ubuntu-latest
+    name: SAST scan (SonarCloud)
     steps:
       - uses: actions/checkout@v2
         with:
